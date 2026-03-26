@@ -12,14 +12,14 @@ def poll_api():
 
     try:
 
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
 
         if response.status_code == 200:
-            print("API call sucessful")
             data = response.json()
-            return data
+            return data.get("response", {}).get("data", [])
         else:
             print(f"Request failed with status code: {response.status_code}")
+            return []
 
     except Exception as e:
         print(f"[ERROR] {e}")

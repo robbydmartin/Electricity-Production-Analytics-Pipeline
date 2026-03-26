@@ -202,7 +202,7 @@ services:
       SPARK_MASTER_URL: spark://spark-master:7077
       PYTHONPATH: /opt/airflow
     volumes:
-      - ./airflow/dags:/opt/airflow/airflow/dags
+      - ./airflow/dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./data:/opt/airflow/data
     healthcheck:
@@ -240,7 +240,7 @@ services:
       SPARK_MASTER_URL: spark://spark-master:7077
       PYTHONPATH: /opt/airflow
     volumes:
-      - ./airflow/dags:/opt/airflow/airflow/dags
+      - ./airflow/dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./data:/opt/airflow/data
       # Docker socket for running docker exec commands (spark-submit)
