@@ -30,10 +30,44 @@ def create_producer(bootstrap_servers: str = "localhost:9092") -> Optional[Kafka
         print(f"    [ERROR] {e}")
         return None
     
+def run_producer(producer, topic: str, records):
 
+    count = 0
+
+    try:
+        for record in records:
+            producer.send(
+                topic=topic,
+                key=record.get("period", "unknown"),
+                value=record
+            )
+            count += 1
+
+    except Exception as e:
+        print(f"    [ERROR] Kafka send error: {e}")
+    finally:
+        print(f"Total records produced: {count}")
+
+    producer.flush()
 
 
 def main():
-    pass
+    
+    topic = "electricity-production"
+    records = poll_api(previous_hours_back=12)
+
+    if not records:
+        print(" [WARNING] No data to send")
+
+    producer = create_producer()
+
+    try:
+        run_producer(producer, topic, records)
+    except Exception as e:
+        print(f"    [ERROR] An unexpected error occured: {e}")
+    finally:
+        producer.close()
+
+    
 if __name__ == '__main__':
     main()
