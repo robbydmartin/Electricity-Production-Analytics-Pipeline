@@ -3,6 +3,7 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from airflow.operators.empty import EmptyOperator
 from datetime import datetime, timedelta
+import subprocess
 
 default_args = {
         "owner" : "electricity_production_team",
@@ -12,7 +13,11 @@ default_args = {
     }
 
 def run_electricity_production_producer():
-    pass
+    subprocess.run(
+        ["python", "/opt/airflow/scripts/electric_producer.py"],
+        check=True
+    )
+
 
 with DAG(
     dag_id = "electricity_production_pipeline_producer",
@@ -28,8 +33,8 @@ with DAG(
     end = EmptyOperator(task_id = "end")
 
     run_electricity_production_producer_task = PythonOperator(
-        task_id = "start_producer"
-        python_callable = 
+        task_id = "start_producer",
+        python_callable = run_electricity_production_producer
     )
 
     start >> run_electricity_production_producer_task >> end
