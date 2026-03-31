@@ -1,15 +1,5 @@
 import random
-import json
 from datetime import datetime, timezone
-
-# json_schema = StructType() \
-#     .add("period", StringType()) \
-#     .add("respondent", StringType()) \
-#     .add("respondent_name", StringType()) \
-#     .add("fueltype", StringType()) \
-#     .add("type-name", StringType()) \
-#     .add("value", IntegerType()) \
-#     .add("value-units", StringType())
 
 CONSTANT_RESPONDENTS = ['AEC', 'AECI', 'AVA', 'AVRN', 'AZPS', 'BANC', 'BPAT', 'CAL', 
                         'CAR', 'CENT', 'CHPD', 'CISO', 'CPLE', 'CPLW', 'DEAA', 'DOPD', 
@@ -61,10 +51,10 @@ def create_single_record() -> dict:
     record = {
         "period" : datetime.now(timezone.utc).strftime("%Y-%m-%dT%H"),
         "respondent" : respondent,
-        "respondent_name" : CONSTANT_RESPONDENTS_NAMES[respondent_index],
+        "respondent-name" : CONSTANT_RESPONDENTS_NAMES[respondent_index],
         "fueltype" : fueltype,
         "type-name" : CONSTANT_FUEL_TYPE_NAMES[fueltype_index], 
-        "value" : int(random.randint(1, 999) * CONSTANT_FUEL_MULTIPLIER[fueltype_index]),
+        "value" : int(random.randint(0, 999) * CONSTANT_FUEL_MULTIPLIER[fueltype_index]),
         "value-units" : "megawatthours"
     }
 

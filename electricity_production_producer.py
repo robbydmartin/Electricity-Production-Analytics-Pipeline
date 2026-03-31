@@ -1,5 +1,5 @@
 from kafka import KafkaProducer
-from kafka.errors import KafkaError, NoBrokersAvailable
+from kafka.errors import NoBrokersAvailable
 import json
 import time
 from typing import Optional
@@ -39,14 +39,16 @@ def run_producer(producer, topic: str, interval: float = 1.0, mini_batch_size: i
     print("Starting producer...")
 
     # Variable to keep track of records produced
-    count = 0
+    record_count = 0
     running = True
 
     try:
         while running:
             for _ in range(mini_batch_size):
+
                 # Create a record
                 record = create_single_record()
+
                 # Send the record to the Kafka topic
                 producer.send(
                     topic=topic,
@@ -55,7 +57,8 @@ def run_producer(producer, topic: str, interval: float = 1.0, mini_batch_size: i
                 )
 
                 # Increase record count
-                count += 1
+                record_count += 1
+
             # Wait before producing again
             time.sleep(interval)
 
@@ -66,17 +69,18 @@ def run_producer(producer, topic: str, interval: float = 1.0, mini_batch_size: i
         print(f"    [ERROR] Kafka send error: {e}")
     finally:
         producer.flush()
-        print(f"Total records produced: {count}")
+        print(f"Total records produced: {record_count}")
 
     
-
-
 def main():
     
+    # Kafka topic
     topic = "electricity-production"
 
+    # Create the producer
     producer = create_producer()
 
+    # Run the producer
     try:
         run_producer(producer, topic, interval=1)
     except Exception as e:
@@ -84,7 +88,5 @@ def main():
     finally:
         producer.close()
 
-    return 0
-    
 if __name__ == '__main__':
     main()
