@@ -1,9 +1,12 @@
 import json
+import logging
 from typing import Optional
 from kafka import KafkaConsumer
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, from_json
 from pyspark.sql.types import StructType, StringType, IntegerType, DoubleType
+
+logger = logging.getLogger(__name__)
 
 json_schema = StructType() \
     .add("period", StringType()) \
@@ -36,7 +39,7 @@ def process_record(record: dict):
 
 def consume_records(consumer):
 
-    print("Starting consumer...")
+    logger.info("Starting consumer...")
 
     record_count = 0
     running = True
@@ -62,15 +65,15 @@ def consume_records(consumer):
         query = parsed_df.writeStream \
             .outputMode("append") \
             .format("json") \
-            .option("path", "/checkpoints") \
-            .option("checkpointLocation", "/checkpoints") \
+            .option("path", "/data/checkpoints") \
+            .option("checkpointLocation", "/data/checkpoints") \
             .start()
         
         query.awaitTermination()
     except KeyboardInterrupt:
-        print("Stopping consumer...")
+        logger.info("Stopping consumer...")
     except Exception as e:
-        print(f"    [ERROR] {e}")
+        logger.error(f"An unexpected error occurred: {e}")
     finally:
         spark.stop()
 
@@ -86,7 +89,7 @@ def main():
     try:
         consume_records(consumer)
     except Exception as e:
-        print(f"    [ERROR] An unexpected error occurred: {e}")
+        logger.error(f"An unexpected error occurred: {e}")
     finally:
         consumer.close()
 

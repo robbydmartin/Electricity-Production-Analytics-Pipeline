@@ -2,9 +2,12 @@ from kafka import KafkaProducer
 from kafka.errors import NoBrokersAvailable
 import json
 import time
+import logging
 from typing import Optional
 from eia_api_connection import poll_api
 from electricity_production_faker import create_single_record
+
+logger = logging.getLogger(__name__)
 
 def create_producer(bootstrap_servers: str = "localhost:9092") -> Optional[KafkaProducer]:
 
@@ -23,20 +26,20 @@ def create_producer(bootstrap_servers: str = "localhost:9092") -> Optional[Kafka
         )
 
         if producer:
-            print(f"    [SUCESS] Producer created successfully")
+            logger.info("Producer created successfully")
     
         return producer
     
     except NoBrokersAvailable:
-        print(f"    [ERROR] No Kafka brokers available")
+        logger.error("No Kafka brokers available")
         return None
     except Exception as e:
-        print(f"    [ERROR] {e}")
+        logger.error(f"An unexpected error occurred: {e}")
         return None
     
 def run_producer(producer, topic: str, interval: float = 1.0, mini_batch_size: int = 5) -> None:
 
-    print("Starting producer...")
+    logger.info("Starting producer...")
 
     # Variable to keep track of records produced
     record_count = 0
@@ -63,13 +66,13 @@ def run_producer(producer, topic: str, interval: float = 1.0, mini_batch_size: i
             time.sleep(interval)
 
     except KeyboardInterrupt:
-        print("Stopping producer...")
+        logger.info("Stopping producer...")
         running = False
     except Exception as e:
-        print(f"    [ERROR] Kafka send error: {e}")
+        logger.error(f"Kafka send error: {e}")
     finally:
         producer.flush()
-        print(f"Total records produced: {record_count}")
+        logger.info(f"Total records produced: {record_count}")
 
     
 def main():
@@ -84,7 +87,7 @@ def main():
     try:
         run_producer(producer, topic, interval=1)
     except Exception as e:
-        print(f"    [ERROR] An unexpected error occured: {e}")
+        logger.error(f"An unexpected error occured: {e}")
     finally:
         producer.close()
 
