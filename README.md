@@ -5,7 +5,7 @@ This in an end-to-end data engineering pipeline that ingests simulated real-time
 
 ## Instructions:
 - To run this program, you will need Docker installed on your system: https://www.docker.com/get-started/
-- Run this command while in the root fold of the project: docker-compose up -d
+- Run this command while in the root folder of the project: docker-compose up -d
 
 ## Status:
 Work in progress.
