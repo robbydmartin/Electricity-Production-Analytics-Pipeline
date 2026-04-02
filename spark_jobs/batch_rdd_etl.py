@@ -9,7 +9,7 @@ from datetime import datetime
 logger = logging.getLogger(__name__)
 
 # Variable for correcting fuel type abbreviations
-corrected_abbreviations = ({"battery storage" : "bats",
+CORRECTED_ABBREVIATIONS = ({"battery storage" : "bats",
                             "solar battery" : "sb", 
                             "unknown energy" : "ue"})
 
@@ -29,8 +29,8 @@ def update_fueltype(record):
     type_name = record.get("type-name")
 
     # Check if type name needs to be corrected
-    if type_name in corrected_abbreviations:
-        record["fueltype"] = corrected_abbreviations.get(type_name)
+    if type_name in CORRECTED_ABBREVIATIONS:
+        record["fueltype"] = CORRECTED_ABBREVIATIONS.get(type_name)
 
     return record
 
