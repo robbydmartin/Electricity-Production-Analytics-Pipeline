@@ -70,6 +70,7 @@ def consume_records(consumer):
             .start()
         
         query.awaitTermination()
+
     except KeyboardInterrupt:
         logger.info("Stopping consumer...")
     except Exception as e:

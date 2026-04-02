@@ -1,7 +1,10 @@
+import logging
 import os
 from typing import Optional
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError
+
+logger = logging.getLogger(__name__)
 
 def create_admin_client(bootstrap_servers: str = "localhost:9092") -> Optional[KafkaAdminClient]:
 
@@ -14,7 +17,7 @@ def create_admin_client(bootstrap_servers: str = "localhost:9092") -> Optional[K
 
 def create_single_topic(admin_client, topic_name: str, num_partitions: int = 3, replication_factor: int = 1) -> bool:
     
-    print(f"Creating topic '{topic_name}'...")
+    logger.info(f"Creating topic '{topic_name}'...")
 
     topic = NewTopic(
         name= topic_name,
@@ -24,11 +27,11 @@ def create_single_topic(admin_client, topic_name: str, num_partitions: int = 3, 
 
     try:
         admin_client.create_topics([topic])
-        print(f"    [SUCCESS] Topic '{topic_name}' created with {num_partitions} partitions")
+        logger.info(f"Topic '{topic_name}' created with {num_partitions} partitions")
     except TopicAlreadyExistsError:
-        print(f"    [INFO] Topic '{topic_name}' already exists")
+        logger.error(f"Topic '{topic_name}' already exists")
     except Exception as e:
-        print(f" [ERROR] {e}")
+        logger.error(f"An unexpected error occurred: {e}")
         return False
 
     return True;
@@ -47,9 +50,9 @@ def create_multiple_topics(admin_client, topics_config: list) -> bool:
 
     try:
         admin_client.create_topics([topics])
-        print(f"    [SUCCESS] Created {len(topics)} topics")
+        logger.info(f"Created {len(topics)} topics")
     except Exception as e:
-        print(f"    [ERROR] {e}")
+        logger.error(f"An unexpected error occurred: {e}")
         return False
     
 def main():

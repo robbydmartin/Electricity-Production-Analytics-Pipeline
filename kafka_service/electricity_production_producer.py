@@ -5,7 +5,7 @@ import time
 import logging
 from typing import Optional
 from eia_api_connection import poll_api
-from electricity_production_faker import create_single_record
+from electricity_production_simulator import create_single_record
 
 logger = logging.getLogger(__name__)
 

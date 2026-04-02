@@ -1,6 +1,6 @@
 import json
 from kafka import KafkaProducer
-from eia_api_connection import poll_api
+from kafka_service.eia_api_connection import poll_api
 
 
 def create_producer(bootstrap_servers):
