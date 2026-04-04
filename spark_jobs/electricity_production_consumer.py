@@ -17,7 +17,7 @@ json_schema = StructType() \
     .add("value", IntegerType()) \
     .add("value-units", StringType())
 
-def create_consumer(topic: str, bootstrap_servers: str = "localhost:9092") -> Optional[KafkaConsumer]:
+def create_consumer(topic: str, bootstrap_servers: str = "kafka:9092") -> Optional[KafkaConsumer]:
     
     consumer = KafkaConsumer(
         topic,

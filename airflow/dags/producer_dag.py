@@ -4,6 +4,7 @@ from airflow.operators.python import PythonOperator
 from airflow.operators.empty import EmptyOperator
 from datetime import datetime, timedelta
 import subprocess
+from kafka_service.electricity_production_producer import main
 
 default_args = {
         "owner" : "electricity_production_team",

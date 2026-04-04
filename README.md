@@ -6,6 +6,7 @@ This in an end-to-end data engineering pipeline that ingests simulated real-time
 ## Instructions:
 - To run this program, you will need Docker installed on your system: https://www.docker.com/get-started/
 - Run this command while in the root folder of the project: docker-compose up -d
+- Start the producer: python -m kafka_service.electricity_production_producer
 
 ## Status:
 Work in progress.

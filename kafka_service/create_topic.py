@@ -6,7 +6,7 @@ from kafka.errors import TopicAlreadyExistsError
 
 logger = logging.getLogger(__name__)
 
-def create_admin_client(bootstrap_servers: str = "localhost:9092") -> Optional[KafkaAdminClient]:
+def create_admin_client(bootstrap_servers: str = "localhost:9094") -> Optional[KafkaAdminClient]:
 
     admin_client = KafkaAdminClient(
         bootstrap_servers = bootstrap_servers,
@@ -42,9 +42,9 @@ def create_multiple_topics(admin_client, topics_config: list) -> bool:
 
     for config in topics_config:
         topic = NewTopic(
-            name= topics_config["name"],
-            num_partitions= topics_config["num_partitions"],
-            replication_factor= topics_config["replication_factor"]
+            name= config["name"],
+            num_partitions= config["num_partitions"],
+            replication_factor= config["replication_factor"]
         )
         topics.append(topic)
 

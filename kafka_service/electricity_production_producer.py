@@ -4,12 +4,12 @@ import json
 import time
 import logging
 from typing import Optional
-from eia_api_connection import poll_api
-from electricity_production_simulator import create_single_record
+from kafka_service.create_topic import main
+from kafka_service.electricity_production_simulator import create_single_record
 
 logger = logging.getLogger(__name__)
 
-def create_producer(bootstrap_servers: str = "localhost:9092") -> Optional[KafkaProducer]:
+def create_producer(bootstrap_servers: str = "localhost:9094") -> Optional[KafkaProducer]:
 
     try:
         # Create a producer
