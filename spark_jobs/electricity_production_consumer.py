@@ -2,11 +2,12 @@ import json
 import logging
 from typing import Optional
 from kafka import KafkaConsumer
+from utils.logger import setup_logging
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, from_json
 from pyspark.sql.types import StructType, StringType, IntegerType, DoubleType
 
-logger = logging.getLogger(__name__)
+logger = setup_logging(__name__)
 
 json_schema = StructType() \
     .add("period", StringType()) \

@@ -4,8 +4,9 @@ from pyspark.sql.functions import col, avg, sum as spark_sum
 from pyspark.sql import DataFrame
 import json
 import logging
+from utils.logger import setup_logging
 
-logger = logging.getLogger(__name__)
+logger = setup_logging(__name__)
 
 # Variable for correcting fuel type abbreviations
 CORRECTED_ABBREVIATIONS = ({"battery storage" : "bats",

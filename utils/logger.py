@@ -7,9 +7,12 @@ from typing import Optional
 FILENAME = "./data/logs/electricity_production_logs.log"
 MAX_BYTES = 50000
 
-def setup_logging() ->  Optional[logging.Logger]:
+def setup_logging(name: str) -> logging.Logger:
 
-    logger = logging.getLogger()
+    logger = logging.getLogger(name)
+
+    if logger.handlers:
+        return logger
 
     logger.setLevel(logging.INFO)
 
@@ -26,5 +29,8 @@ def setup_logging() ->  Optional[logging.Logger]:
     file_format = logging.Formatter("%(asctime)s | %(levelname)s | %(module)s | %(lineno)s | %(message)s")
     file_handler.setFormatter(file_format)
     logger.addHandler(file_handler)
+
+    # Silence any Kafka logs
+    logging.getLogger("kafka").propagate = False
 
     return logger

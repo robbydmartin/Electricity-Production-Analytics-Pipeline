@@ -99,6 +99,7 @@ services:
     command: [ "/opt/spark/sbin/start-master.sh" ]
     volumes:
       - ./spark_jobs:/opt/spark_jobs
+      - ./utils:/opt/utils
       - spark_data:/opt/spark-data
     depends_on:
       spark-init:
@@ -123,6 +124,7 @@ services:
     command: [ "/opt/spark/sbin/start-worker.sh", "spark://spark-master:7077" ]
     volumes:
       - ./spark_jobs:/opt/spark_jobs
+      - ./utils:/opt/utils
       - spark_data:/opt/spark-data
     networks:
       - electricity-production-pipeline-network
@@ -219,6 +221,9 @@ services:
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
+      - ./kafka_service:/opt/airflow/kafka_service
+      - ./utils:/opt/airflow/utils
+      - ./spark_jobs:/opt/airflow/spark_jobs
       - spark_data:/opt/spark-data
     healthcheck:
       test: [ "CMD", "curl", "--fail", "http://localhost:8080/health" ]
@@ -264,6 +269,9 @@ services:
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
+      - ./kafka_service:/opt/airflow/kafka_service
+      - ./utils:/opt/airflow/utils
+      - ./spark_jobs:/opt/airflow/spark_jobs
       - spark_data:/opt/spark-data
       # Docker socket for running docker exec commands (spark-submit)
       - /var/run/docker.sock:/var/run/docker.sock

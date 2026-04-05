@@ -3,8 +3,9 @@ import os
 from typing import Optional
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError
+from utils.logger import setup_logging
 
-logger = logging.getLogger(__name__)
+logger = setup_logging(__name__)
 
 def create_admin_client(bootstrap_servers: str = "localhost:9094") -> Optional[KafkaAdminClient]:
 
@@ -54,17 +55,3 @@ def create_multiple_topics(admin_client, topics_config: list) -> bool:
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}")
         return False
-    
-def main():
-
-    # Create admin client
-    admin_client = create_admin_client()
-
-    # Create topic
-    create_single_topic(admin_client, "electricity-production")
-
-    # Cleanup
-    admin_client.close()
-
-if __name__ == '__main__':
-    main()

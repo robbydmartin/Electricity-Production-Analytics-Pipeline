@@ -5,8 +5,9 @@ import logging
 import os
 import shutil
 from datetime import datetime
+from utils.logger import setup_logging
 
-logger = logging.getLogger(__name__)
+logger = setup_logging(__name__)
 
 # Variable for correcting fuel type abbreviations
 CORRECTED_ABBREVIATIONS = ({"battery storage" : "bats",

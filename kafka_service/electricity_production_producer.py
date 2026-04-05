@@ -4,10 +4,11 @@ import json
 import time
 import logging
 from typing import Optional
-from kafka_service.create_topic import main
+from kafka_service.create_topic import create_admin_client, create_single_topic
+from utils.logger import setup_logging
 from kafka_service.electricity_production_simulator import create_single_record
 
-logger = logging.getLogger(__name__)
+logger = setup_logging(__name__)
 
 def create_producer(bootstrap_servers: str = "localhost:9094") -> Optional[KafkaProducer]:
 
@@ -80,8 +81,18 @@ def main():
     # Kafka topic
     topic = "electricity-production"
 
+    # Create admin client for topic
+    admin_client = create_admin_client()
+
+    # Create topic
+    create_single_topic(admin_client, topic)
+
     # Create the producer
     producer = create_producer()
+
+    if not producer:
+        logger.error("Producer creation failed. Exiting...")
+        return
 
     # Run the producer
     try:
@@ -89,7 +100,11 @@ def main():
     except Exception as e:
         logger.error(f"An unexpected error occured: {e}")
     finally:
-        producer.close()
+        # Cleanup
+        if admin_client:
+            admin_client.close()
+        if producer:
+            producer.close()
 
 if __name__ == '__main__':
     main()
