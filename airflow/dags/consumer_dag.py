@@ -26,10 +26,11 @@ with DAG(
         task_id="start_spark_consumer",
         bash_command= """
             echo "Starting Spark consumer..."
+            export PYTHONPATH=/opt/airflow:$PYTHONPATH
             spark-submit \
-            --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
+            --master spark://spark-master:7077 \
             /opt/airflow/spark_jobs/electricity_production_consumer.py \
-            --bootstrap-servers kafka:9092 \
+            --duration 120
             """
     )
 

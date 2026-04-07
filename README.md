@@ -6,7 +6,8 @@ This in an end-to-end data engineering pipeline that ingests simulated real-time
 ## Instructions:
 - To run this program, you will need Docker installed on your system: https://www.docker.com/get-started/
 - Run this command while in the root folder of the project: docker-compose up -d
-- Start the producer: python -m kafka_service.electricity_production_producer
+- Start the producer using the terminal: python -m kafka_service.electricity_production_producer
+- Run the consumer and RDD/DF transformations via Airflow UI.
 
 ## Status:
 Work in progress.

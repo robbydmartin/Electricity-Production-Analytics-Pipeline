@@ -66,8 +66,8 @@ def consume_records(consumer):
         query = parsed_df.writeStream \
             .outputMode("append") \
             .format("json") \
-            .option("path", "/data/checkpoints") \
-            .option("checkpointLocation", "/data/checkpoints") \
+            .option("path", "opt/airflow/data/raw") \
+            .option("checkpointLocation", "opt/airflow/data/checkpoints") \
             .start()
         
         query.awaitTermination()

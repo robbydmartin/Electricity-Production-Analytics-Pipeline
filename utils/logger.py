@@ -4,7 +4,10 @@ from logging import handlers
 from logging.handlers import RotatingFileHandler
 from typing import Optional
 
-FILENAME = "./data/logs/electricity_production_logs.log"
+LOG_DIRECTORY = "opt/airflow/logs"
+os.makedirs(LOG_DIRECTORY, exist_ok=True)
+
+FILENAME = os.path.join(LOG_DIRECTORY, "electricity_production_logs.log")
 MAX_BYTES = 50000
 
 def setup_logging(name: str) -> logging.Logger:
