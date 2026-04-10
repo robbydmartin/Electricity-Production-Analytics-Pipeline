@@ -19,7 +19,7 @@ RUN curl -o /tmp/spark.tgz https://archive.apache.org/dist/spark/spark-${SPARK_V
 # Set Environment Variables
 ENV SPARK_HOME=/opt/spark
 ENV PATH="${PATH}:${SPARK_HOME}/bin"
-ENV PYTHONPATH=/opt/airflow:/opt
+#ENV PYTHONPATH=/opt/airflow:/opt
 
 # Dynamically set JAVA_HOME based on architecture (works on both amd64 and arm64)
 # This creates a script that runs at shell startup to set JAVA_HOME correctly`

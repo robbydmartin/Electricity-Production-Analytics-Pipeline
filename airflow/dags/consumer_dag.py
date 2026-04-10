@@ -28,10 +28,20 @@ with DAG(
             echo "Starting Spark consumer..."
             export PYTHONPATH=/opt/airflow:$PYTHONPATH
             spark-submit \
-            --master spark://spark-master:7077 \
             /opt/airflow/spark_jobs/electricity_production_consumer.py \
             --duration 120
             """
     )
 
-start >> run_consumer >> end
+    run_rdd_elt_task = BashOperator(
+        task_id= "rdd_etl",
+        bash_command= """
+            export PYTHONPATH=/opt/airflow:$PYTHONPATH
+            spark-submit \
+            --master spark://spark-master:7077 \
+            --deploy-mode client \
+            /opt/airflow/spark_jobs/batch_rdd_etl.py
+        """
+    )
+
+start >> run_consumer >> run_rdd_elt_task >> end

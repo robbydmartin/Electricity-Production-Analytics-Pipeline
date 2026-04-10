@@ -222,6 +222,7 @@ services:
       - ./airflow/dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./kafka_service:/opt/airflow/kafka_service
+      - ./data:/opt/airflow/data
       - ./utils:/opt/airflow/utils
       - ./spark_jobs:/opt/airflow/spark_jobs
       - spark_data:/opt/spark-data
@@ -270,6 +271,7 @@ services:
       - ./airflow/dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./kafka_service:/opt/airflow/kafka_service
+      - ./data:/opt/airflow/data
       - ./utils:/opt/airflow/utils
       - ./spark_jobs:/opt/airflow/spark_jobs
       - spark_data:/opt/spark-data
