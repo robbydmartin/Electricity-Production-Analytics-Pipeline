@@ -100,6 +100,7 @@ services:
     volumes:
       - ./spark_jobs:/opt/airflow/spark_jobs
       - ./utils:/opt/airflow/utils
+      - ./data:/opt/airflow/data
       - spark_data:/opt/spark-data
     depends_on:
       spark-init:
@@ -125,6 +126,7 @@ services:
     volumes:
       - ./spark_jobs:/opt/airflow/spark_jobs
       - ./utils:/opt/airflow/utils
+      - ./data:/opt/airflow/data
       - spark_data:/opt/spark-data
     networks:
       - electricity-production-pipeline-network
@@ -218,6 +220,7 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       # Spark connection details
       SPARK_MASTER_URL: spark://spark-master:7077
+      PYTHONPATH: /opt/airflow
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
@@ -267,6 +270,7 @@ services:
       AIRFLOW__SMTP__SMTP_MAIL_FROM: bserf.airflow.demo@gmail.com
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SPARK_MASTER_URL: spark://spark-master:7077
+      PYTHONPATH: /opt/airflow
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs

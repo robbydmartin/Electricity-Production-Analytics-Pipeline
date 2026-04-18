@@ -23,20 +23,21 @@ with DAG(
     end = EmptyOperator(task_id = "end")
 
     run_consumer = BashOperator(
-        task_id="start_spark_consumer",
+        task_id = "start_spark_consumer",
         bash_command= """
             echo "Starting Spark consumer..."
-            export PYTHONPATH=/opt/airflow:$PYTHONPATH
+
             spark-submit \
+            --master spark://spark-master:7077 \
+            --deploy-mode client \
+            --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
             /opt/airflow/spark_jobs/electricity_production_consumer.py \
-            --duration 120
-            """
+        """
     )
 
     run_rdd_elt_task = BashOperator(
         task_id= "rdd_etl",
         bash_command= """
-            export PYTHONPATH=/opt/airflow:$PYTHONPATH
             spark-submit \
             --master spark://spark-master:7077 \
             --deploy-mode client \
@@ -44,4 +45,4 @@ with DAG(
         """
     )
 
-start >> run_consumer >> run_rdd_elt_task >> end
+start >> run_consumer >> end
