@@ -32,6 +32,7 @@ with DAG(
             --deploy-mode client \
             --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
             /opt/airflow/spark_jobs/electricity_production_consumer.py \
+            --duration 120
         """
     )
 
@@ -45,4 +46,4 @@ with DAG(
         """
     )
 
-start >> run_consumer >> end
+start >> run_consumer >> [run_rdd_elt_task] >> end
