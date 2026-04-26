@@ -48,13 +48,16 @@ def main():
 
     electricity_df = spark.read.json(path)
 
+    # Rename the columns
+    electricity_df = clean_df(electricity_df, COLUMN_RENAME_MAP)
+
     # Cache the main dataframe for repeated use
     electricity_df_cached = electricity_df.persist(StorageLevel.MEMORY_AND_DISK)
 
     # Display the main dataframe
     electricity_df_cached.select("*").show()
 
-    sum_by_type = electricity_df_cached.groupBy("type-name").agg(
+    sum_by_type = electricity_df_cached.groupBy("type_name").agg(
         spark_sum(col("value")).alias("total_megawatthours")
     ).sort("total_megawatthours", ascending=False)
     sum_by_type.show()
@@ -70,7 +73,7 @@ def main():
 
     save_df(total_by_respondent, "production_by_respondent_name")
 
-    avg_hourly_by_type = electricity_df_cached.groupBy("fueltype", "type-name").agg(
+    avg_hourly_by_type = electricity_df_cached.groupBy("fueltype", "type_name").agg(
         avg(col("value")).alias("average_hourly_production")
     ).sort("average_hourly_production", ascending=False)
     avg_hourly_by_type.show()

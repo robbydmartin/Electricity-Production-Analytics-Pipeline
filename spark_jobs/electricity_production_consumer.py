@@ -7,6 +7,8 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, from_json
 from pyspark.sql.types import StructType, StringType, IntegerType, DoubleType
 
+logger = setup_logging(__name__)
+
 json_schema = StructType() \
     .add("period", StringType()) \
     .add("respondent", StringType()) \
@@ -18,12 +20,7 @@ json_schema = StructType() \
 
 def consume_records():
 
-    logger = setup_logging(__name__)
-
     logger.info("Starting consumer...")
-
-    record_count = 0
-    running = True
 
     spark = SparkSession.builder \
         .appName("Electricity-Production-Analytics-Pipeline") \
@@ -34,7 +31,7 @@ def consume_records():
             .format("kafka") \
             .option("kafka.bootstrap.servers", "kafka:9092") \
             .option("subscribe", "electricity-production") \
-            .option("startingOffsets", "earliest") \
+            .option("startingOffsets", "latest") \
             .load()
     
         parsed_df = raw_df \
@@ -50,7 +47,8 @@ def consume_records():
             .trigger(once=True) \
             .start()
         
-        query.awaitTermination()
+        query.awaitTermination(timeout = 120)
+        query.stop()
         logger.info("Finished batch sucessfully.")
 
     except KeyboardInterrupt:

@@ -25,8 +25,6 @@ with DAG(
     run_consumer = BashOperator(
         task_id = "start_spark_consumer",
         bash_command= """
-            echo "Starting Spark consumer..."
-
             spark-submit \
             --master spark://spark-master:7077 \
             --deploy-mode client \
@@ -46,4 +44,14 @@ with DAG(
         """
     )
 
-start >> run_consumer >> [run_rdd_elt_task] >> end
+    run_df_etl_task = BashOperator(
+        task_id = "df_etl",
+        bash_command = """
+            spark-submit \
+            --master spark://spark-master:7077 \
+            --deploy-mode client \
+            /opt/airflow/spark_jobs/batch_df_etl.py
+           """
+    )
+
+start >> run_consumer >> [run_rdd_elt_task, run_df_etl_task] >> end
