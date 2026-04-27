@@ -36,13 +36,19 @@ def update_fueltype(record):
     return record
 
 def build_session(appName : str ="Electricity-Analytics-Pipeline"):
-    # Create a SparkSession
-    spark = SparkSession.builder \
-        .appName(appName) \
-        .master("local[*]") \
-        .getOrCreate()
+
+    try:
+        # Create a SparkSession
+        spark = SparkSession.builder \
+            .appName(appName) \
+            .master("local[*]") \
+            .getOrCreate()
+        
+        return spark
     
-    return spark
+    except Exception as e:
+        logger.error(f"Failed to create Spark session: {e}")
+        raise
 
 def save_rdd(rdd):
 
@@ -65,39 +71,44 @@ def main():
     # Location of consumed data
     path = "/opt/airflow/data/raw/*.json"
 
-    # Create a spark session
-    spark = build_session()
+    try:
+        # Create a spark session
+        spark = build_session()
 
-    # Create a spark context
-    sc = spark.sparkContext
-    # json_rdd = sc.textFile("./data/temp_api_data.json")
-    json_rdd = sc.textFile(path)
+        # Create a spark context
+        sc = spark.sparkContext
+        # json_rdd = sc.textFile("./data/temp_api_data.json")
+        json_rdd = sc.textFile(path)
 
-    # Map each json element to a single line, text elements are lowercased, fueltypes are corrected
-    electricity_rdd = json_rdd.map(parse_json)\
-                .map(lambda x : clean_text(x, ["respondent", "respondent-name", "fueltype", "type-name"]))\
-                .map(update_fueltype) \
-                .filter(lambda x : x.get("value") != 0)
-    
-    # Display the first 10 rows of rdd
-    for row in electricity_rdd.take(10):
-        print(row)
+        # Map each json element to a single line, text elements are lowercased, fueltypes are corrected
+        electricity_rdd = json_rdd.map(parse_json)\
+                    .map(lambda x : clean_text(x, ["respondent", "respondent-name", "fueltype", "type-name"]))\
+                    .map(update_fueltype) \
+                    .filter(lambda x : x.get("value") != 0)
+        
+        # Display the first 10 rows of rdd
+        for row in electricity_rdd.take(10):
+            print(row)
 
-    print(f"Number of elements in rdd: {electricity_rdd.count()}")
+        print(f"Number of elements in rdd: {electricity_rdd.count()}")
 
-    # Create pair RDD consisting of total megawatt production by fueltype
-    pair_rdd = electricity_rdd.map(lambda x: (x["fueltype"], x["value"])) \
-        .reduceByKey(lambda x, y: x + y) \
-        .coalesce(1)
-    
-    # Display the first 10 rows of rdd
-    for row in pair_rdd.take(10):
-        print(row)
-    
-    save_rdd(pair_rdd)
+        # Create pair RDD consisting of total megawatt production by fueltype
+        pair_rdd = electricity_rdd.map(lambda x: (x["fueltype"], x["value"])) \
+            .reduceByKey(lambda x, y: x + y) \
+            .coalesce(1)
+        
+        # Display the first 10 rows of rdd
+        for row in pair_rdd.take(10):
+            print(row)
+        
+        save_rdd(pair_rdd)
 
-    # Cleanup
-    spark.stop()
+    except Exception as e:
+        logger.error(f"Pipeline failed: {e}")
+    finally:
+        if spark:
+            # Cleanup
+            spark.stop()
 
 if __name__ == "__main__":
     main()
