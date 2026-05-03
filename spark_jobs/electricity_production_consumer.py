@@ -22,11 +22,13 @@ def consume_records():
 
     logger.info("Starting consumer...")
 
+    # Create a spark session
     spark = SparkSession.builder \
         .appName("Electricity-Production-Analytics-Pipeline") \
         .getOrCreate()
 
     try:
+        # Consume the records from the data stream
         raw_df = spark.readStream \
             .format("kafka") \
             .option("kafka.bootstrap.servers", "kafka:9092") \
@@ -34,11 +36,13 @@ def consume_records():
             .option("startingOffsets", "latest") \
             .load()
     
+        # Convert records to proper JSON format
         parsed_df = raw_df \
             .selectExpr("CAST(value AS STRING) as json_str") \
             .select(from_json(col("json_str"), json_schema).alias("data")) \
             .select("data.*")
 
+        # Write the JSON to the stream
         query = parsed_df.writeStream \
             .outputMode("append") \
             .format("json") \
@@ -49,6 +53,7 @@ def consume_records():
         
         query.awaitTermination(timeout = 120)
         query.stop()
+        
         logger.info("Finished batch sucessfully.")
 
     except KeyboardInterrupt:

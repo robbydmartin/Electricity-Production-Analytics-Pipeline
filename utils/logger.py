@@ -7,17 +7,16 @@ from typing import Optional
 LOG_DIRECTORY = os.getenv("LOG_DIR", "./data/logs")
 os.makedirs(LOG_DIRECTORY, exist_ok=True)
 
-FILENAME = os.path.join(LOG_DIRECTORY, "electricity_production_logs.log")
+FILENAME = os.path.join(LOG_DIRECTORY, "electricity_production.log")
 MAX_BYTES = 5 * 1024 * 1024
 
 def setup_logging(name: str) -> logging.Logger:
 
     logger = logging.getLogger(name)
+    logger.setLevel(logging.INFO)
 
     if logger.handlers:
         return logger
-
-    logger.setLevel(logging.INFO)
 
     # Create handler for console output
     console_handler = logging.StreamHandler()
@@ -32,6 +31,8 @@ def setup_logging(name: str) -> logging.Logger:
     file_format = logging.Formatter("%(asctime)s | %(levelname)s | %(module)s | %(lineno)s | %(message)s")
     file_handler.setFormatter(file_format)
     logger.addHandler(file_handler)
+
+    logger.propagate = True
 
     # Silence any Kafka logs
     logging.getLogger("kafka").propagate = False
